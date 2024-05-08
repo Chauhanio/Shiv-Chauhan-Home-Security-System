@@ -1,14 +1,16 @@
-#include <Servo.h>
+#include <Servo.h> //including the servo library so servo functions can be used.
 
-Servo myServo;
+Servo myServo; //making a servo object so the servo can be controlled via code.
 
-int servoPin = 5;
-int potPin = A0;
+int servoPin = 5; //declaring the pin that the servo is connected to. 
+int potPin = A0; //declaring the analog pin that the potentiometer is connected to. 
 
-const int trigPin = 10;
-const int echoPin = 9;
+const int trigPin = 10; //declaring the trigger pin.
+const int echoPin = 9; //declaring the echo pin.
 
 void setup() {
+
+//initializing the different pins and 
 
   myServo.attach(servoPin);
   
@@ -24,13 +26,15 @@ void setup() {
 
 void loop() {
 
-  int reading = analogRead(potPin);
-  int angle = map(reading, 0, 1023, 0, 180);
-  myServo.write(angle);
-  
-  long duration, inches, cm;
 
+
+  int reading = analogRead(potPin); //constantly reading the potentiometer value. 
+  int angle = map(reading, 0, 1023, 0, 180); //controlling the servo based on the potentiometers value.
+  myServo.write(angle); //moving the servo arm.
   
+  long duration, inches, cm; //declaring distance variables for the ultrasonic sensor.
+
+  //sending out pulses from the trigger sensor.
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -38,14 +42,15 @@ void loop() {
   digitalWrite(trigPin, LOW);
 
   
-  duration = pulseIn(echoPin, HIGH);
+  duration = pulseIn(echoPin, HIGH); //calculating the time it took for the waves to reflect on the objects surface and reflect back to the echo pin.
 
-  
+  //distance variables.
   inches = microsecondsToInches(duration);
   cm = microsecondsToCentimeters(duration);
 
   if(cm <=5){
 
+    /if the distance from the sensor is less than 5 centimeters, then there will be a constant beeping nose and continuous light.
     digitalWrite(12, HIGH);
 
     digitalWrite(13, HIGH);
@@ -53,6 +58,8 @@ void loop() {
     delay(50);
 
   } else if(cm <=10){
+
+    //if the object is less than 10 centimeters but more than 5 centimeters from the sensor, there will be a beeping noise and a light flickering with a delay of 50 milliseconds.
 
     digitalWrite(12, HIGH);
 
@@ -66,6 +73,8 @@ void loop() {
     
   } else if(cm <= 20){
 
+
+    //if the object is less than 20 centimeters but more than 10 centimeters from the sensor, there will be a beeping noise and a light flickering with a delay of 100 milliseconds.
     digitalWrite(12, HIGH);
 
     digitalWrite(13, HIGH);
@@ -78,10 +87,13 @@ void loop() {
 
   } else {
 
+    //if there is nothing in front of the sensor, there will be no beeping noise and light flickering.
     digitalWrite(13, LOW);
     digitalWrite(12, LOW);
 
   }
+
+  //prints out the distance from the object to the sensor in the IDE.
 
   Serial.print(inches);
   Serial.print("in, ");
@@ -92,6 +104,8 @@ void loop() {
   delay(100);
   
 }
+
+//functions to convert the time taken for the pulse to be returned and converting them to the different measurements.
 
 long microsecondsToInches(long microseconds) {
   
